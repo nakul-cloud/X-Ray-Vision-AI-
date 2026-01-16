@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XRayVision AI - Medical Analysis</title>
+    <link rel="stylesheet" href="styles.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Poppins:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+
+<body>
+    <!-- Header Navigation (Always visible) -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-circle">🩻</div>
+                    <span class="logo-text">XRayVision AI</span>
+                </div>
+                <nav class="nav">
+                    <a href="#" onclick="switchScreen('homeScreen')" class="nav-link active">Home</a>
+                    <a href="#" onclick="switchScreen('enhancementPage')"
+                        class="nav-link analysis-link disabled">Enhancement</a>
+                    <a href="#" onclick="switchScreen('noisePage')" class="nav-link analysis-link disabled">Noise</a>
+                    <a href="#" onclick="switchScreen('segmentationPage')"
+                        class="nav-link analysis-link disabled">Segmentation</a>
+                    <a href="#" onclick="switchScreen('histogramsPage')"
+                        class="nav-link analysis-link disabled">Histograms</a>
+                    <a href="#" onclick="switchScreen('pipelinesPage')"
+                        class="nav-link analysis-link disabled">Pipelines</a>
+                    <a href="#" onclick="switchScreen('ragPage')" class="nav-link analysis-link disabled">AI
+                        Assistant</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <!-- 1. Home Screen - Upload & Summary ONLY -->
+        <section id="homeScreen" class="screen active">
+            <div class="container">
+                <div class="hero-section">
+                    <div class="hero-content">
+                        <h1 class="hero-title">Medical Intelligence Analysis<br>with <span
+                                class="gradient-text">XRayVision AI</span></h1>
+                        <p class="hero-subtitle">
+                            Upload any X-ray and instantly get enhanced visuals, noise reduction, segmentation, and
+                            AI-generated technical insights.
+                            <br>A complete intelligent imaging dashboard powered by computer vision + RAG.
+                        </p>
+
+                        <div class="upload-section">
+                            <div class="upload-zone" id="uploadZone">
+                                <div class="upload-icon">
+                                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2">
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                        <polyline points="17 8 12 3 7 8"></polyline>
+                                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                                    </svg>
+                                </div>
+                                <h3 class="upload-title">Select X-Ray Image</h3>
+                                <p class="upload-text">Drag & drop or click to upload</p>
+                                <p class="upload-formats">Supported: DICOM, PNG, JPEG</p>
+                                <input type="file" id="fileInput" accept="image/*" hidden>
+                            </div>
+                        </div>
+
+                        <!-- Toast Notification (Hidden by default) -->
+                        <div id="uploadSuccess" class="upload-success" style="display: none;">
+                            <div class="success-icon">✓</div>
+                            <div class="success-message">
+                                <h3>Image Uploaded Successfully</h3>
+                                <p>Ready for analysis. Choose a tool from the menu.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. Enhancement Page -->
+        <section id="enhancementPage" class="screen page-container">
+            <div class="container">
+                <div class="page-header">
+                    <h2>Image Enhancement</h2>
+                    <p>Improve contrast and visibility of bone structures using advanced algorithms.</p>
+                </div>
+                <div class="page-content">
+                    <div class="controls-card card">
+                        <div class="control-group">
+                            <label>Method</label>
+                            <select id="enhancementMethod" class="select-input">
+                                <option value="clahe">CLAHE (Adaptive Histogram)</option>
+                                <option value="hist_eq">Standard Histogram Eq</option>
+                                <option value="adaptive_clahe">High-Contrast Adaptive</option>
+                            </select>
+                        </div>
+                        <button id="applyEnhancement" class="btn-primary">Apply Enhancement</button>
+                    </div>
+
+                    <div class="comparison-view">
+                        <div class="view-item card">
+                            <div class="view-header">Original</div>
+                            <div class="image-wrapper"><img id="enhancementBefore"></div>
+                        </div>
+                        <div class="view-item card">
+                            <div class="view-header">Enhanced Result</div>
+                            <div class="image-wrapper"><img id="enhancementAfter"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. Noise Reduction Page -->
+        <section id="noisePage" class="screen page-container">
+            <div class="container">
+                <div class="page-header">
+                    <h2>Noise Reduction</h2>
+                    <p>Remove artifacts and grain while preserving critical edge details.</p>
+                </div>
+                <div class="page-content">
+                    <div class="controls-card card">
+                        <div class="control-group">
+                            <label>Filter Type</label>
+                            <select id="noiseMethod" class="select-input">
+                                <option value="bilateral">Bilateral Filter (Edge-Preserving)</option>
+                                <option value="gaussian">Gaussian Blur</option>
+                                <option value="median">Median Filter</option>
+                            </select>
+                        </div>
+                        <button id="applyNoise" class="btn-primary">Apply Filter</button>
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="view-item card">
+                            <div class="view-header">Original (Input)</div>
+                            <div class="image-wrapper"><img id="noiseOriginal"></div>
+                        </div>
+                        <div class="view-item card">
+                            <div class="view-header">Filtered (Result)</div>
+                            <div class="image-wrapper"><canvas id="noiseFilteredCanvas"></canvas></div>
+                        </div>
+                    </div>
+
+                    <h3 class="mt-4 mb-2">Noise Analysis Heatmaps</h3>
+                    <div class="grid-3">
+                        <div class="view-item card">
+                            <div id="residualHeader" class="view-header">Residual Noise (Diff)</div>
+                            <div class="image-wrapper"><canvas id="residualMap"></canvas></div>
+                        </div>
+                        <div class="view-item card">
+                            <div class="view-header">Local Variance</div>
+                            <div class="image-wrapper"><canvas id="varianceMap"></canvas></div>
+                        </div>
+                        <div class="view-item card">
+                            <div class="view-header">Gradient Difference</div>
+                            <div class="image-wrapper"><canvas id="gradientMap"></canvas></div>
+                        </div>
+                    </div>
+
+                    <div id="noiseMetricsContainer" class="card p-4 mt-4" style="display: none;">
+                        <h4>Quality Metrics</h4>
+                        <div class="metrics-grid">
+                            <div class="metric-item">
+                                <span class="metric-label">Residual Noise Level</span>
+                                <span id="metricResidual" class="metric-value">0.00</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-label">Variance Level</span>
+                                <span id="metricVariance" class="metric-value">0.00</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-label">Edge Preservation (SSIM)</span>
+                                <span id="metricEdge" class="metric-value">0.00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. Segmentation Page -->
+        <section id="segmentationPage" class="screen page-container">
+            <div class="container">
+                <div class="page-header">
+                    <h2>Segmentation Analysis</h2>
+                    <p>Isolate regions of interest using Otsu thresholding and Watershed algorithms.</p>
+                </div>
+                <div class="page-content">
+                    <button id="runSegmentation" class="btn-primary" style="margin-bottom: 2rem;">Run Segmentation
+                        Pipeline</button>
+
+                    <div class="grid-2-2">
+                        <div class="view-item card">
+                            <div class="view-header">Otsu Mask</div>
+                            <div class="image-wrapper"><img id="segOtsu"></div>
+                        </div>
+                        <div class="view-item card">
+                            <div class="view-header">Watershed Regions</div>
+                            <div class="image-wrapper"><img id="segWatershed"></div>
+                        </div>
+                        <div class="view-item card">
+                            <div class="view-header">Edge Detection</div>
+                            <div class="image-wrapper"><img id="segEdges"></div>
+                        </div>
+                        <div class="view-item card chart-box">
+                            <div class="view-header">Region Statistics</div>
+                            <canvas id="regionChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. Histograms Page -->
+        <section id="histogramsPage" class="screen page-container">
+            <div class="container">
+                <div class="page-header">
+                    <h2>Advanced Histogram Analysis</h2>
+                    <p>Analyze intensity distributions across all enhancement stages.</p>
+                </div>
+                <div class="page-content">
+                    <!-- Controls -->
+                    <div class="histogram-controls card">
+                        <button id="computeHistograms" class="btn-primary">
+                            Compute All Histograms
+                        </button>
+                        <div class="stage-selector-wrapper">
+                            <label for="histogramStageSelector">Select Stage:</label>
+                            <select id="histogramStageSelector" class="select-input">
+                                <option value="">-- Select Stage --</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Charts -->
+                    <div class="grid-2">
+                        <div class="card p-4">
+                            <h4 id="histogramTitle">Intensity Histogram</h4>
+                            <canvas id="histogramChart"></canvas>
+                        </div>
+                        <div class="card p-4">
+                            <h4 id="cdfTitle">Cumulative Distribution (CDF)</h4>
+                            <canvas id="cdfChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. Pipeline Comparison Page -->
+        <section id="pipelinesPage" class="screen page-container">
+            <div class="container">
+                <div class="page-header">
+                    <h2>Pipeline Comparison</h2>
+                    <p>Compare 9 different enhancement/denoising combinations to find the optimal workflow.</p>
+                </div>
+                <div class="page-content">
+                    <div class="pipeline-intro">
+                        <p>Click below to generate all pipeline variations and rank them by Image Quality (composite
+                            score of Contrast, PSNR, and SSIM).</p>
+                        <button id="runPipelines" class="btn-primary">Run All Pipelines</button>
+                    </div>
+
+                    <div id="pipelineResults" style="display: none; margin-top: 2rem;">
+                        <!-- Best Result Hero -->
+                        <div class="best-result card">
+                            <div class="badge-best">🏆 Recommended Pipeline</div>
+                            <div class="best-content">
+                                <div class="best-info">
+                                    <h3 id="bestPipelineName">CLAHE + Bilateral</h3>
+                                    <div class="metrics-grid">
+                                        <div class="m-item">
+                                            <span>Score</span>
+                                            <strong id="bestScore">0.95</strong>
+                                        </div>
+                                        <div class="m-item">
+                                            <span>PSNR</span>
+                                            <strong id="bestPSNR">32.5</strong>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="best-image">
+                                    <img id="bestPipelineImage">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- All Pipelines Table/Grid -->
+                        <div class="pipeline-grid" id="pipelineGrid"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 7. AI Assistant Page (RAG) -->
+        <section id="ragPage" class="screen page-container">
+            <div class="container">
+                <div class="page-header">
+                    <h2>Advanced Technical Interpretation Using LLMs & RAG</h2>
+                    <p>Ask questions and get insights based on Mode-B semantic feature analysis.</p>
+                </div>
+                <div class="page-content chat-layout">
+                    <div class="chat-main card">
+                        <div class="chat-history">
+                            <div class="bot-message">
+                                <strong>AI Assistant</strong>
+                                <p>I have analyzed the X-Ray semantics. Key features detected:</p>
+                                <div id="semanticFeatures" class="features-list"></div>
+                                <div id="ragExplanation" class="answer-container answer-text">Ready for your questions.
+                                </div>
+                            </div>
+                            <div id="followupAnswer" class="answer-container answer-text" style="display:none;"></div>
+                        </div>
+                        <div class="chat-input-area">
+                            <textarea id="followupQuestion"
+                                placeholder="Ask e.g. 'Is the bone density normal?'"></textarea>
+                            <button id="askFollowup" class="btn-primary">Send</button>
+                        </div>
+                    </div>
+
+                    <div class="sidebar-info card">
+                        <button id="analyzeRAG" class="btn-primary full-width">Generate Full Report</button>
+                        <hr>
+                        <h4>Semantic Metrics</h4>
+                        <ul id="metricSidebar" class="metric-ul">
+                            <li>Run analysis to see data</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="spinner"></div>
+        <p>Processing...</p>
+    </div>
+
+    <script src="api.js?v=2"></script>
+    <script src="histogram-utils.js?v=2"></script>
+    <script src="charts.js?v=2"></script>
+    <script src="scripts.js?v=2"></script>
+</body>
+
+</html>
